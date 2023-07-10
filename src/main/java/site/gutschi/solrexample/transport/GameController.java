@@ -17,6 +17,7 @@ import site.gutschi.solrexample.model.GameRepository;
 public class GameController {
     private final GameRepository gameRepository;
 
+    @SuppressWarnings("SameReturnValue")
     @GetMapping("/games/{id}")
     public String showGame(@PathVariable("id") int id, Model model) {
         log.info("Get game " + id);
@@ -36,6 +37,7 @@ public class GameController {
         return new RedirectView("/games");
     }
 
+    @SuppressWarnings("SameReturnValue")
     @GetMapping("/games")
     public String showGames(Model model) {
         final var games = gameRepository.findAll();

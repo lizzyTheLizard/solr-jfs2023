@@ -98,7 +98,8 @@
                 </table>
             </div>
             <div class="row mb-3" th:each="review : ${game.reviews}">
-                <textarea class="form-control" disabled rows="2" id="review_1" th:text="${review}">Tied as my favorite souls game with Bloodborne, truly one I'll keep coming back too.</textarea>
+                <!--suppress HtmlFormInputWithoutLabel -->
+                <textarea class="form-control" disabled rows="2" th:text="${review}">Tied as my favorite souls game with Bloodborne, truly one I'll keep coming back too.</textarea>
             </div>
         </div>
     </main>

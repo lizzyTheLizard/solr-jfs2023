@@ -11,7 +11,6 @@ import site.gutschi.solrexample.model.Game;
 import site.gutschi.solrexample.model.GameRepository;
 
 import java.util.Collection;
-import java.util.List;
 
 
 @RestController
