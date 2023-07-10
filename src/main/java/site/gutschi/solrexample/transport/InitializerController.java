@@ -26,11 +26,17 @@ public class InitializerController {
     public void init() {
         final var games = csvInputReader.readCsv();
         initDB(games);
+        initIndex(games);
+        log.info("Initialized " + games.size() + " games");
     }
 
     private void initDB(Collection<Game> games){
         gameRepository.truncate();
         gameRepository.saveAll(games);
+    }
 
+    @SuppressWarnings("unused")
+    private void initIndex(Collection<Game> games){
+        //Not implemented yet
     }
 }

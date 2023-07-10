@@ -11,27 +11,37 @@
 * Initialisieren http://localhost:8080/api/initialize
 * Öffnen UI http://localhost:8080
 
-# Initialisieren
+
+# SolrJ
+* In [pom.xml](pom.xml), danach neu starten
+
 ```
-    public void reindex(Collection<Game> games) {
-        try {
-            try {
-                solr.deleteByQuery("*.*");
-            } catch (Exception e) {
-                throw SolrCommunicationException.couldNotDeleteDocuments(e);
-            }
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-solrj</artifactId>
+			<version>9.2.0</version>
+		</dependency>
+```
+
+# Initialisieren
+* Danach suchen in  http://localhost:8983/solr
+* In [InitializerController.java](src/main/java/site/gutschi/solrexample/transport/InitializerController.java)
+```
+
+    public void initIndex(Collection<Game> games) {
+        try (SolrClient solr = new Http2SolrClient.Builder("http://localhost:8983/solr/games").build()){
+            solr.deleteByQuery("*.*");
             games.forEach(game -> {
-                SolrInputDocument document = convertToSolr(game);
                 try {
+                    SolrInputDocument document = convertToSolr(game);
                     solr.add(document);
-                } catch (Exception e) {
-                    throw SolrCommunicationException.couldNotAddGame(game, e);
+                } catch (SolrServerException | IOException e) {
+                    log.warn("Could not index " + game, e);
                 }
             });
-            log.debug("Commit changes");
             solr.commit();
-        } catch (Exception e) {
-            rollbackAndFail(e);
+        } catch (IOException | SolrServerException e) {
+            log.warn("Could not re-index ",e);
         }
     }
 
@@ -59,8 +69,34 @@
         document.addField("playing", game.getPlaying());
         document.addField("plays", game.getPlays());
         document.addField("numberOfReviews", game.getNumberOfReviews());
-        return document
+        return document;
     }
 ```
+
+
+
+
+
+# Suchen
+* In [GameController.java](src/main/java/site/gutschi/solrexample/transport/GameController.java) und
+```
+        try (SolrClient solr = new Http2SolrClient.Builder("http://localhost:8983/solr/games").build()){
+            final var solrQuery = new SolrQuery();
+            solrQuery.set("q", search);
+            solrQuery.set("fl", "id");
+            solrQuery.setRows(1000);
+            final var response = solr.query(solrQuery);
+            final var ids = response.getResults().stream()
+                    .map(s -> (String) s.getFieldValue("id"))
+                    .map(Integer::parseInt)
+                    .collect(Collectors.toList());
+            log.info("Get " + ids.size() + " games");
+            return gameRepository.findAllById(ids);
+        } catch (IOException | SolrServerException e) {
+            log.error("Could not search: " + search, e);
+            return List.of();
+        }
+```
+
 
 
