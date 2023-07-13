@@ -56,7 +56,25 @@ public class GameController {
             log.info("Get all games");
             return gameRepository.findAll();
         }
-        //Not implemented yet
         return List.of();
+
+        /*
+        try (SolrClient solr = new Http2SolrClient.Builder("http://localhost:8983/solr/games").build()){
+            final var solrQuery = new SolrQuery();
+            solrQuery.set("q", search);
+            solrQuery.set("fl", "id");
+            solrQuery.setRows(1000);
+            final var response = solr.query(solrQuery);
+            final var ids = response.getResults().stream()
+                    .map(s -> (String) s.getFieldValue("id"))
+                    .map(Integer::parseInt)
+                    .collect(Collectors.toList());
+            log.info("Get " + ids.size() + " games");
+            return gameRepository.findAllById(ids);
+        } catch (IOException | SolrServerException e) {
+            log.error("Could not search: " + search, e);
+            return List.of();
+        }
+         */
     }
 }

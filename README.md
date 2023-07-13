@@ -17,7 +17,6 @@ docker-compose up
 
 Das Example bietet eine UI, auf die unter http://localhost:8080 zugegriffen werden kann. Die Applikation implementiert eine Datenbank von Computer-Games inkl. Hersteller-Studio, Gerne und Bewertungen.
 Beim ersten Starten muss die Datenbank mit den Daten aus [games.csv](src/main/resources/games.csv) initialisiert werden. Dies kann mit der URL http://localhost:8080/api/initialize gemacht werden.
-Im Branch 'start', die Suchfunktion ist noch nicht implementer, im main ist sie bereits implementiert.
 
 
 # Links
